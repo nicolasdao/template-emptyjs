@@ -6,7 +6,9 @@
     },
     "extends": "eslint:recommended",
     "globals": {
-        "process": false
+        "process": false,
+        "describe": false,
+        "it": false
     },
     "parserOptions": {
         "sourceType": "module"

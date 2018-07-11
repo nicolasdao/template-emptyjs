@@ -12,7 +12,7 @@
   },
   "homepage": "https://github.com/nicolasdao/template-emptyjs#readme",
   "scripts": {
-    "eslint": "eslint index.js src/ test/ --fix",
+    "lint": "eslint index.js src/ test/ --fix",
     "release": "standard-version",
     "start": "node-dev index.js",
     "test": "mocha"

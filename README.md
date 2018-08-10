@@ -27,7 +27,7 @@ npm start
   | #  |Task             | Command                                                       | Note                                               | 
   |:-:| :--------------- |:------------------------------------------------------------- |:---------------------------------------------------|
   | 1 | Start            | `npm start`                                                   | Start node with hot reload thanks to `node-dev`.   |
-  | 2 | Lint             | `npm run eslint`                                              | Lint and automatically fixes errors when possible. |
+  | 2 | Lint             | `npm run lint`                                              	 | Lint and automatically fixes errors when possible. |
   | 3 | Increase version | `npm run release`<br/>`npm run release -- --release-as 1.1.0` | The 1st command increments the version, while the 2nd sets the version to a specific number. |
   | 4 | Test             | `npm test`                                                    | Test all files in the `test` folder.               |
 

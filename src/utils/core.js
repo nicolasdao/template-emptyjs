@@ -230,6 +230,106 @@ const addSecondsToDate = (d, v=0) => {
 	return t
 }
 
+
+const _dateFormatBreakDown = (format='yyyy-mm-dd') => {
+	const _format = format.toLowerCase()
+
+	const yyyyIdx = _format.indexOf('yyyy')
+	const mmIdx = _format.indexOf('mm')
+	const ddIdx = _format.indexOf('dd')
+	
+	if (yyyyIdx < 0)
+		throw new Error(`Invalid argument 'format' ${format}. It is missing the required 'yyyy' placeholder (e.g., 'dd-mm-yyyy')`)
+	if (mmIdx < 0)
+		throw new Error(`Invalid argument 'format' ${format}. It is missing the required 'mm' placeholder (e.g., 'dd-mm-yyyy')`)
+	if (ddIdx < 0)
+		throw new Error(`Invalid argument 'format' ${format}. It is missing the required 'dd' placeholder (e.g., 'dd-mm-yyyy')`)
+
+	const breakDown = {
+		yyyy: { pos: yyyyIdx < mmIdx && yyyyIdx < ddIdx ? 0 : yyyyIdx < mmIdx || yyyyIdx < ddIdx ? 1 : 2, idx: yyyyIdx },
+		mm: { pos: mmIdx < yyyyIdx && mmIdx < ddIdx ? 0 : mmIdx < yyyyIdx || mmIdx < ddIdx ? 1 : 2, idx: mmIdx },
+		dd: { pos: ddIdx < mmIdx && ddIdx < yyyyIdx ? 0 : ddIdx < mmIdx || ddIdx < yyyyIdx ? 1 : 2 , idx: ddIdx },
+		build: (yyyy, mm, dd) => {
+			const y = yyyy * 1
+			const m = mm * 1
+			const d = dd * 1
+			const year = 
+				y < 10 ? `000${y}` : 
+					y < 100 ? `00${y}` : 
+						y < 1000 ? `0${y}` : 
+							y > 10000 ? '9999' : `${y}`
+			const month = 
+				m < 10 ? `0${m}` :
+					m > 12 ? '12' : `${m}`
+			const day = 
+				d < 10 ? `0${d}` :
+					d > 31 ? '31' : `${d}`
+			
+			return _format.replace('yyyy', year).replace('mm', month).replace('dd', day)
+		}
+	}
+
+	return breakDown
+}
+
+/**
+ * Convert a date into a specific short date string format
+ * 
+ * @param  {Date} 	date    		e.g., 2018-11-22T00:00:00.000Z
+ * @param  {Object} options.format 	Default 'dd-mm-yyyy'
+ * @return {String}         		e.g., 22-11-2018
+ */
+const convertDateToShortDateString = (date, options={}) => {
+	if (date instanceof Date) {
+		const parts = _dateFormatBreakDown(options.format)
+		const [yyyy, mm, dd] = date.toISOString().split('T')[0].split('-')
+		return parts.build(yyyy, mm, dd)
+	}
+
+	throw new Error('Wrong argument exception. \'date\' is expected to be a Date')
+}
+
+
+
+
+/**
+ * [description]
+ * @param  {String} date    		e.g., 22/11/2018
+ * @param  {String} options.format 	e.g., dd/mm/yyyy or dd-mm-yyyy (the separator can be different to the one used in the 'date' input)
+ * @return {Date}         			2018-11-22T00:00:00.000Z
+ */
+const convertShortDateStringToDate = (date, options={}) => {
+	if (typeof(date) != 'string')
+		throw new Error('Wrong argument exception. \'date\' is expected to be a string representing a date similar to \'22/11/2018\'')
+
+	const _date = date.replace(/\s/g, '')
+	const separators = uniq(_date.match(/[^0-9]/g) || [], x => x)
+	if (separators && separators.length > 1) 
+		throw new Error(`Invalid date string format. Multiple separators detected in '${date}'. There should only be one, or none at all.`)
+	
+	const sep = !separators ? '' : separators[0]
+	const parts = _dateFormatBreakDown(options.format)
+
+	if (sep) {
+		const values = _date.split(sep).map(x => {
+			const n = x*1
+			return n < 10 ? `0${n}` : `${n}`
+		})
+		if (values.some(x => !x))
+			throw new Error(`Invalid date string ${date}`)
+
+		const yyyy = values[parts.yyyy.pos]
+		const mm = values[parts.mm.pos]
+		const dd = values[parts.dd.pos]
+		return new Date(`${yyyy}-${mm}-${dd}`)
+	} else {
+		const yyyy = _date.slice(parts.yyyy.idx, parts.yyyy.idx+4)
+		const mm = _date.slice(parts.mm.idx, parts.mm.idx+2)
+		const dd = _date.slice(parts.dd.idx, parts.dd.idx+2)
+		return new Date(`${yyyy}-${mm}-${dd}`)
+	}
+}
+
 //////////////////////////                           END DATETIME HELPER                        ////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -466,7 +566,9 @@ module.exports = {
 		addYears: addYearsToDate,
 		addHours: addHoursToDate,
 		addMinutes: addMinutesToDate,
-		addSeconds: addSecondsToDate
+		addSeconds: addSecondsToDate,
+		toShort: convertDateToShortDateString,
+		parseShort: convertShortDateStringToDate
 	},
 	identity: {
 		'new': newId

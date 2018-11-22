@@ -74,11 +74,11 @@ const addTimeout = (p, timeOut=30000) => {
 	const timeoutMsg = `timout_${identity.new()}`
 	const timeoutTask = new Promise(onSuccess => setTimeout(() => onSuccess(timeoutMsg), timeOut))
 	return Promise.race([timeoutTask, p])
-	.then(res => {
-		if (res == timeoutMsg)
-			throw new Error(`timeout`)
-		return res
-	})
+		.then(res => {
+			if (res == timeoutMsg)
+				throw new Error('timeout')
+			return res
+		})
 }
 
 /**

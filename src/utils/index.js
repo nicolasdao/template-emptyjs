@@ -8,5 +8,6 @@
 
 module.exports = Object.assign(require('./core'), {
 	promise: require('./promise'),
-	url: require('./url')
+	url: require('./url'),
+	fetch: require('./fetch')
 })

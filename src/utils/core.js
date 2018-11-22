@@ -280,6 +280,8 @@ const _dateFormatBreakDown = (format='yyyy-mm-dd') => {
  * @return {String}         		e.g., 22-11-2018
  */
 const convertDateToShortDateString = (date, options={}) => {
+	if (!date)
+		return null
 	if (date instanceof Date) {
 		const parts = _dateFormatBreakDown(options.format)
 		const [yyyy, mm, dd] = date.toISOString().split('T')[0].split('-')
@@ -299,6 +301,8 @@ const convertDateToShortDateString = (date, options={}) => {
  * @return {Date}         			2018-11-22T00:00:00.000Z
  */
 const convertShortDateStringToDate = (date, options={}) => {
+	if (!date)
+		return null
 	if (typeof(date) != 'string')
 		throw new Error('Wrong argument exception. \'date\' is expected to be a string representing a date similar to \'22/11/2018\'')
 

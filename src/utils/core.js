@@ -243,12 +243,12 @@ const addSecondsToDate = (d, v=0) => {
  * Returns a unique identifier (default length 9)
  * @param  {Boolean} options.short 		[description]
  * @param  {Boolean} options.long 		[description]
- * @param  {String}  options.separator 	Not valid when options.short is true
- * @param  {Boolean} options.lowerCase 	[description]
+ * @param  {String}  options.sep 		Not valid when options.short is true
+ * @param  {Boolean} options.lowerCase 		[description]
  * @return {[type]}         			[description]
  */
 const newId = (options={}) => {
-	const sep = options.separator || ''
+	const sep = options.sep || ''
 	const getId = options.lowerCase 
 		? () => shortid.generate().replace(/-/g, 'r').replace(/_/g, '9').toLowerCase().slice(0,5)
 		: () => shortid.generate().replace(/-/g, 'r').replace(/_/g, '9').slice(0,5)

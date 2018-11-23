@@ -1,6 +1,23 @@
 const url = require('url')
 const path = require('path')
 
+/**
+ * Breaks down a URI
+ *
+ * @param  {String}  uri    				e.g., 'https://neap.co/tech/blog/index.html?article=serverless&source=medium#conclusion'
+ * @param  {Boolean} option.ignoreFailure 	[description]
+ * 
+ * @return {String}  results.protocol       e.g., 'https:'
+ * @return {String}  results.host       	e.g., 'neap.co'
+ * @return {String}  results.origin      	e.g., 'https://neap.co'
+ * @return {String}  results.pathname       e.g., '/tech/blog/index.html'
+ * @return {String}  results.querystring    e.g., '?article=serverless&source=medium'
+ * @return {String}  results.hash       	e.g., '#conclusion'
+ * @return {String}  results.uri       		e.g., 'https://neap.co/tech/blog/index.html?article=serverless&source=medium#conclusion'
+ * @return {String}  results.shorturi      	e.g., 'https://neap.co/tech/blog/index.html'
+ * @return {String}  results.pathnameonly   e.g., '/tech/blog'
+ * @return {String}  results.contentType    e.g., 'text/html'
+ */
 const getUrlInfo = (uri, option={}) => {
 	if (uri) {
 		let u = uri.trim()

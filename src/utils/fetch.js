@@ -7,7 +7,7 @@
 */
 const fetch = require('node-fetch')
 
-const _processResponse = (res, options={}) => !options.format || options.format == 'json' ? res.json() : res.text()
+const _processResponse = (res, options={}) => (!options.format || options.format == 'json' ? res.json() : res.text())
 	.then(data => ({ status: res.status, data }))
 	.catch(() => ({ status: 200, data: res }))
 

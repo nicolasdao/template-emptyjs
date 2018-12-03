@@ -491,7 +491,7 @@ const isEmptyObj = obj => {
 }
 
 const isObj = obj => {
-	if (!obj || typeof(obj) != 'object')
+	if (!obj || typeof(obj) != 'object' || Array.isArray(obj) || (obj instanceof Date))
 		return false 
 
 	try {

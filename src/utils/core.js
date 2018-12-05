@@ -197,12 +197,12 @@ const objectS2Ccase = obj => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////                           START LOG              	               ////////////////////////////////
 
-const logTransaction = (transId, parentId, name, payload) => _log(transId, parentId, name, payload, 'info')
+const logTransaction = ({ transId, parentId, operationId, name, payload }) => _log({ transId, parentId, operationId, name, payload, type: 'info' })
 
-const logError = (transId, parentId, name, payload) => _log(transId, parentId, name, payload, 'error')
+const logError = ({ transId, parentId, operationId, name, payload }) => _log({ transId, parentId, operationId, name, payload, type: 'error' })
 
-const _log = (transId, parentId, name, payload, type) => {
-	const args = [{ type: type, name, transId, parentId, payload, created: new Date() }]
+const _log = ({ transId, parentId, operationId, name, payload, type }) => {
+	const args = [{ type: type, name, transId, parentId, operationId, payload, created: new Date().toISOString() }]
 	if (process.env.NODE_ENV == 'dev') {
 		args.push(null)
 		args.push(' ')

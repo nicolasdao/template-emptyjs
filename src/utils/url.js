@@ -54,7 +54,19 @@ const getUrlInfo = (uri, option={}) => {
 
 const joinUrlParts = (...values) => {
 	const v = values.filter(x => x)
-	return v.length == 0 ? '' : path.join(...v).replace(':/', '://')
+	if (!v.some(x => x))
+		return ''
+
+	if (typeof(v[0]) == 'object') {
+		let { origin, pathname, querystring, hash } = v[0]
+		if (origin && pathname) {
+			origin = origin.replace(/\/*$/, '')
+			pathname = pathname.replace(/^\/*/, '')
+		}
+		const o = path.posix.join(...[origin, pathname].filter(x => x))
+		return `${o}${querystring||''}${hash||''}`.replace(/:\/((?!\/)|\/\/+)/, '://')
+	} else 
+		return path.posix.join(...v.map(x => /:\/+$/.test(x) ? x : x.replace(/(^\/+|\/+$)/g, ''))).replace(/:\/((?!\/)|\/\/+)/, '://')
 }
 
 const isPopularWebPageExt = ext => 

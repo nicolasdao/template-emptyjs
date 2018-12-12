@@ -658,6 +658,7 @@ const validateIsDate = (d, options={ exception: { toggle: false, message: null }
 
 module.exports = {
 	collection: {
+		batch,
 		uniq,
 		headTail,
 		sortBy,

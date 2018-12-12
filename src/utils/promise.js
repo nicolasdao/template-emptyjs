@@ -109,13 +109,12 @@ const addTimeout = (p, timeOut=30000) => {
 
 /**
  * [description]
- * @param  {Function} fn        				[description]
- * @param  {Function} successFn 				(res, options) => Returns a promise or a value. The value is a boolean or an object that determines 
- *                                  			whether a response is valid or not. If the value is an object, that object might contain
- *                                  			a 'retryInterval' which overrides the optional value. 
- * @param  {Function} failureFn 				(Optional) (error, options) => Returns a promise or a value. The value is a boolean or an object that determines 
- *                                  			whether a response is valid or not. If the value is an object, that object might contain
- *                                  			a 'retryInterval' which overrides the optional value.                          			
+ * @param  {Function} fn        				Parameterless function that must be retried if something goes wrong.
+ * @param  {Function} successFn 				(res, options) => Returns an boolean or a Promise returning a boolean. The boolean 
+ *                                  			determine if the response is OK or if we need to proceed to a retry. 
+ * @param  {Function} failureFn 				(Optional) (error, options) => Returns an boolean or a Promise returning a boolean. The boolean 
+ *                                  			determine if the error should be ignore and therefore be considered as a success or if we 
+ *                                  			need to proceed to a retry.                         			
  * @param  {Number}   options.retryAttempts   	default: 5. Number of retry
  * @param  {Number}   options.attemptsCount   	Current retry count. When that counter reaches the 'retryAttempts', the function stops.
  * @param  {Number}   options.timeOut   		If specified, 'retryAttempts' and 'attemptsCount' are ignored
@@ -125,8 +124,9 @@ const addTimeout = (p, timeOut=30000) => {
  * @param  {Boolean}  options.ignoreError   	In case of constant failure to pass the 'successFn' test, this function will either throw an error
  *                                           	or return the current result without throwing an error if this flag is set to true.
  * @param  {String}   options.errorMsg   		Customize the exception message in case of failure.
- * @param  {String}   options.ignoreFailure   	If set to true, then failure from fn will cause a retry
- * @return {[type]}             				[description]
+ * @param  {String}   options.ignoreFailure   	Only meaningfull when no 'failureFn' function is set. If set to true, then failure from fn 
+ *                                             	will cause a retry
+ * @return {Promise}             				Promise that return whatever is returned by 'fn'
  */
 const retry = arities(
 	'function fn, function successFn, object options={}',

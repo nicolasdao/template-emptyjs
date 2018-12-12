@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2017-2018, Neap Pty Ltd.
+ * All rights reserved.
+ * 
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree.
+*/
+
 const url = require('url')
 const path = require('path')
 

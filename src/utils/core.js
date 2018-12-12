@@ -574,10 +574,10 @@ const objAreSame = (o_1, o_2, options={}) => {
 		return true
 	
 	if (o_1 === null || o_1 === undefined)
-		return failed(`The first object is non-truthy while the second is truthy`)
+		return failed('The first object is non-truthy while the second is truthy')
 
 	if (o_2 === null || o_2 === undefined)
-		return failed(`The second object is non-truthy while the first is truthy`)
+		return failed('The second object is non-truthy while the first is truthy')
 	
 	const o_1_type = o_1 instanceof Date ? 'date' : Array.isArray(o_1) ? 'array' : typeof(o_1)
 	const o_2_type = o_2 instanceof Date ? 'date' : Array.isArray(o_2) ? 'array' : typeof(o_2)
@@ -620,7 +620,7 @@ const objAreSame = (o_1, o_2, options={}) => {
 	
 	if (o_1_type == 'array') {
 		if (o_1.length != o_2.length) {
-			return failed(`Arrays don't have the same amount of items`)
+			return failed('Arrays don\'t have the same amount of items')
 		}
 
 		return o_1.reduce((isSame, obj_1) => {

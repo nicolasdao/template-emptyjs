@@ -8,7 +8,7 @@
 const fs = require('fs')
 const fetch = require('node-fetch')
 const { Writable } = require('stream')
-const { getInfo } = require('./urlHelper')
+const { getInfo } = require('./url')
 
 /**
  * [description]

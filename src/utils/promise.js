@@ -190,11 +190,21 @@ const retry = arities(
 				}))
 	})
 
+const runOnce = (fn) => {
+	let _fn
+	return (...args) => {
+		if (!_fn) {
+			_fn = Promise.resolve(null).then(() => fn(...args))
+		}
+		return _fn
+	}
+}
 
 module.exports = {
 	delay,
 	wait,
 	retry,
 	makePromiseQueryable,
-	addTimeout
+	addTimeout,
+	runOnce
 }

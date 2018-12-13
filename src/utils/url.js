@@ -114,7 +114,8 @@ const isPopularImgExt = ext =>
 	ext == '.psd' ||
 	ext == '.svg' ||
 	ext == '.tif' ||
-	ext == '.tiff'
+	ext == '.tiff' ||
+	ext == '.webp'
 
 const isPopularFontExt = ext => 
 	ext == '.eot' ||
@@ -188,6 +189,7 @@ const _supportedContentType = {
 	'.svg': 'image/svg+xml',
 	'.tif': 'image/tiff',
 	'.tiff': 'image/tiff',
+	'.webp': 'image/webp',
 	// font
 	'.eot': 'application/vnd.ms-fontobject',
 	'.woff2': 'font/woff2',

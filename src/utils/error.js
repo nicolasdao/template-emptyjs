@@ -14,7 +14,7 @@ const throwIfMissing = (value, valueName) => {
 
 const throwIfWrongValue = (value, valueName, validValues) => {
 	if (!value)
-		throw new Error('Failed to test value against a list of valid value. Not value was passed.')
+		throw new Error('Failed to test value against a list of valid value. No value was passed.')
 	if (!valueName)
 		throw new Error('Failed to test value against a list of valid value. Missing second argument \'valueName\'.')
 	if (typeof(valueName) != 'string')
@@ -29,7 +29,27 @@ const throwIfWrongValue = (value, valueName, validValues) => {
 		throw new Error(`Value for variable '${valueName}' is invalid. Valid values are ${validValues} (current: ${value}).`)
 }
 
+const throwIfNoMatch = (value, valueName, regex) => {
+	if (!value)
+		throw new Error('Failed to test value against a regex. No value was passed.')
+	if (!valueName)
+		throw new Error('Failed to test value against a regex. Missing second argument \'valueName\'.')
+	if (typeof(valueName) != 'string')
+		throw new Error('Failed to test value against a regex. Wrong argument exception. The second argument \'valueName\' must be a string.')
+	if (!regex)
+		throw new Error('Failed to test value against a regex. Missing third required argument \'regex\'.')
+	if (!(regex instanceof RegExp))
+		throw new Error('Failed to test value against a regex. Third required argument \'regex\' is not a RegExp.')
+
+	const valid = regex.test(value)
+	if (valid)
+		return value
+	else
+		throw new Error(`Value for variable '${valueName}' is invalid. It does not match regex ${regex}.`)
+}
+
 module.exports = {
 	throwIfMissing,
-	throwIfWrongValue
+	throwIfWrongValue,
+	throwIfNoMatch
 }

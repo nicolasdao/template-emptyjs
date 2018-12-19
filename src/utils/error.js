@@ -12,6 +12,7 @@ const throwIfMissing = (value, valueName) => {
 	return value
 }
 
+// e.g., throwIfWrongValue(type, 'type', ['YEAR', 'MONTH'])
 const throwIfWrongValue = (value, valueName, validValues) => {
 	if (!value)
 		throw new Error('Failed to test value against a list of valid value. No value was passed.')
@@ -48,8 +49,28 @@ const throwIfNoMatch = (value, valueName, regex) => {
 		throw new Error(`Value for variable '${valueName}' is invalid. It does not match regex ${regex}.`)
 }
 
+// e.g., throwIfGreaterThan(startDate, endDate, 'startDate', 'endDate')
+const throwIfGreaterThan = (value1, value2, valueName1, valueName2) => {
+	if (!value1)
+		throw new Error('Failed to compare value1 with value2. No value1 was passed.')
+	if (!value2)
+		throw new Error('Failed to compare value1 with value2. No value2 was passed.')
+
+	const valid = value1 <= value2
+	if (valid)
+		return [value1, value2]
+	else {
+		if (valueName1 && valueName2)
+			throw new Error(`'${valueName1}' must be smaller or equal to '${valueName2}' (current: ${value1}(${valueName1}) > ${value2}(${valueName2})).`)
+		else
+			throw new Error(`'value1' must be smaller or equal to 'value2' (current: ${value1}(value1) > ${value2}(value2)).`)
+	}
+}
+
 module.exports = {
 	throwIfMissing,
 	throwIfWrongValue,
-	throwIfNoMatch
+	throwIfNoMatch,
+	throwIfGreaterThan
 }
+

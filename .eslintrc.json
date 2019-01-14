@@ -9,7 +9,8 @@
         "process": false,
         "describe": false,
         "it": false,
-        "Buffer": false
+        "Buffer": false,
+        "__dirname": false
     },
     "parserOptions": {
         "sourceType": "module",

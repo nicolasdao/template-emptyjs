@@ -471,10 +471,37 @@ const median = (arr=[], fn) => {
 	}
 }
 
-const getRandomNumber = (start, end) => {
-	const size = end == undefined ? start : (end - start)
-	const offset = end == undefined ? 0 : start
+const getRandomNumber = ({ start, end }) => {
+	const endDoesNotExist = end === undefined
+	if (start == undefined && endDoesNotExist)
+		return Math.random()
+	
+	const _start = start >= 0 ? Math.round(start) : 0
+	const _end = end >= 0 ? Math.round(end) : 0
+	const size = endDoesNotExist ? _start : (_end - _start)
+	const offset = endDoesNotExist ? 0 : _start
 	return offset + Math.floor(Math.random() * size)
+}
+
+const getRandomNumbers = ({ start, end, size }) => {
+	const _start = start >= 0 ? Math.round(start) : 0
+	const _end = end >= 0 ? Math.round(end) : 0
+	const _size = _start <= _end ? (_end - _start) : 0
+	size = size || 0
+	if (size > _size)
+		throw new Error(`Wrong argument exception. The interval [${_start}, ${_end}] does not contain enough elements to return ${size} random numbers`)
+	
+	if (size <= 0 || _size <= 0)
+		return [getRandomNumber({ start: _start, end: _end })]
+
+	const _series = newSeed(_size).map((_,idx) => idx)
+	return newSeed(size).reduce((acc) => {
+		const index = getRandomNumber({ start: 0, end: acc.s })
+		acc.data.push(_start + _series[index])
+		_series.splice(index,1) // remove that number
+		acc.s-- 
+		return acc
+	}, { data: [], s: _size }).data
 }
 
 //////////////////////////                              END MATH                                 ///////////////////////////////

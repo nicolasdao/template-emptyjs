@@ -60,6 +60,19 @@ const getUrlInfo = (uri, option={}) => {
 		return {}
 }
 
+/**
+ * Creates a string URI
+ * @param  {UrlInfo} uriInfo 	URI info object (usually coming from the 'getUrlInfo' method above)
+ * @return {String}         	Url string 
+ */
+const buildUrl = uriInfo => {
+	const { protocol, host, origin, pathname, querystring, hash } = uriInfo || {}
+	if (!host && !origin)
+		return ''
+	const _origin = !host ? origin : `${protocol || 'http:'}//${host}`
+	return joinUrlParts({ origin: _origin, pathname, querystring, hash })
+}
+
 const joinUrlParts = (...values) => {
 	const v = values.filter(x => x)
 	if (!v.some(x => x))
@@ -209,6 +222,7 @@ module.exports = {
 	getInfo: getUrlInfo,
 	join: joinUrlParts,
 	makeHtml: makePageHtml,
+	buildUrl,
 	ext:{
 		isPage: isPopularWebPageExt,
 		isImg: isPopularImgExt,

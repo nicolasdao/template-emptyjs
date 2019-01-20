@@ -189,6 +189,37 @@ const objectS2Ccase = obj => {
 	}, {})
 }
 
+const _supportedEncoding = { 'hex': true, 'utf8': true, 'base64': true, 'ascii': true, 'buffer': true }
+const encoder = (obj, options) => {
+	let { type } = options || {}
+	type = type || 'utf8'
+	const o = obj || ''
+	const isString = typeof(o) == 'string'
+	const isBuffer = o instanceof Buffer
+	if (!isString && !isBuffer)
+		throw new Error(`Wrong argument exception. The 'encoder' method only accept input of type 'string' or 'Buffer' (current: ${typeof(o)})`)
+	if (!_supportedEncoding[type])
+		throw new Error(`Wrong argument exception. The 'encoder' method only accept the following encoding types: 'hex', 'utf8', 'base64', 'buffer' and 'ascii' (current: ${type})`)
+	return {
+		to: encoding => {
+			encoding = encoding || 'utf8'
+			if (!_supportedEncoding[encoding])
+				throw new Error(`Wrong argument exception. The 'encoder.to' method only accept the following encoding types: 'hex', 'utf8', 'base64', 'buffer' and 'ascii' (current: ${encoding})`)
+
+			if (isString) {
+				if (encoding == 'buffer')
+					return o ? Buffer.from(o, type) : new Buffer(0)
+				else
+					return Buffer.from(o, type).toString(encoding)
+			}
+			else if (encoding == 'buffer')
+				return o 
+			else
+				return o.toString(encoding)
+		}
+	}
+}
+
 //////////////////////////                           END CONVERTER	                            ////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -697,7 +728,8 @@ module.exports = {
 		s2cCase,
 		c2sCase,
 		objectC2Scase,
-		objectS2Ccase
+		objectS2Ccase,
+		encoder
 	},
 	date: {
 		timestamp: getTimestamp,

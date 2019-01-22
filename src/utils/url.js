@@ -61,16 +61,32 @@ const getUrlInfo = (uri, option={}) => {
 }
 
 /**
- * Creates a string URI
- * @param  {UrlInfo} uriInfo 	URI info object (usually coming from the 'getUrlInfo' method above)
- * @return {String}         	Url string 
+ * Creates a string URI based on a URI info object (usually coming from the 'getUrlInfo' method above)
+ * 
+ * @param  {String} uriInfo.protocol		e.g., 'http:'
+ * @param  {String} uriInfo.host			e.g., 'neap.co' This overrides the 'origin' property
+ * @param  {String} uriInfo.origin			e.g., 'http://neap.co' This will be ignored if a 'host' property is defined
+ * @param  {String} uriInfo.pathname		e.g., '/blog/index.html' The extension will be replaced by the 'ext' property if it has been defined
+ * @param  {String} uriInfo.querystring		e.g., '?hello=world' 
+ * @param  {String} uriInfo.hash			e.g., '#boom'
+ * @param  {String} uriInfo.ext				e.g., '.aspx' This overrides the the extension in the 'pathname'
+ * 
+ * @return {String}         				e.g., 'http://neap.co/blog/index.aspx?hello=world#boom'
  */
 const buildUrl = uriInfo => {
-	const { protocol, host, origin, pathname, querystring, hash } = uriInfo || {}
+	const { protocol, host, origin, pathname, querystring, hash, ext } = uriInfo || {}
 	if (!host && !origin)
 		return ''
 	const _origin = !host ? origin : `${protocol || 'http:'}//${host}`
-	return joinUrlParts({ origin: _origin, pathname, querystring, hash })
+	const { ext:pathnameExt } = pathname ? getUrlInfo(`https://neap.co/${pathname}`)  : { ext:'' }
+	let _pathname = pathname
+	// if the explicit extension is the same as the one in the pathname, then keep the pathname
+	// otherwise, overwrite the pathname extension with the explicit one
+	if (_pathname && ext !== undefined && pathnameExt != ext) {
+		const _ext = /^\./.test(ext) ? ext : `.${ext}`
+		_pathname = _pathname.replace(/\.[0-9a-zA-Z]*$/, _ext)
+	} 
+	return joinUrlParts({ origin: _origin, pathname: _pathname, querystring, hash })
 }
 
 const joinUrlParts = (...values) => {

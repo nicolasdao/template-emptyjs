@@ -228,10 +228,6 @@ const encoder = (obj, options) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////                           START LOG              	               ////////////////////////////////
 
-const logTransaction = ({ transId, parentId, operationId, name, payload }) => _log({ transId, parentId, operationId, name, payload, type: 'info' })
-
-const logError = ({ transId, parentId, operationId, name, payload }) => _log({ transId, parentId, operationId, name, payload, type: 'error' })
-
 const _log = ({ transId, parentId, operationId, name, payload, type }) => {
 	const args = [{ type: type, name, transId, parentId, operationId, payload, created: new Date().toISOString() }]
 	if (process.env.NODE_ENV == 'dev') {
@@ -242,6 +238,20 @@ const _log = ({ transId, parentId, operationId, name, payload, type }) => {
 	return newId()
 }
 
+const logTransaction = ({ transId, parentId, operationId, name, payload }) => _log({ transId, parentId, operationId, name, payload, type: 'info' })
+
+const logError = ({ transId, parentId, operationId, name, payload }) => _log({ transId, parentId, operationId, name, payload, type: 'error' })
+
+const logMemoryUsage = () => {
+	const used = process.memoryUsage()
+	console.log()
+	console.log('\x1b[36mMEMORY USAGE\x1b[0m')
+	console.log('\x1b[36m============\x1b[0m')
+	for (let key in used) {
+		console.log(`\x1b[36m   ${key} ${Math.round(used[key] / 1024 / 1024 * 100) / 100} MB\x1b[0m`)
+	}
+	console.log()
+}
 
 //////////////////////////                           END LOG         		                    ////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -747,7 +757,8 @@ module.exports = {
 	},
 	log: {
 		transaction: logTransaction,
-		error: logError
+		error: logError,
+		memory: logMemoryUsage
 	},
 	math: {
 		avg,

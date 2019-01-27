@@ -764,7 +764,8 @@ module.exports = {
 		avg,
 		stdDev,
 		median,
-		randomNumber: getRandomNumber
+		randomNumber: getRandomNumber,
+		randomNumbers: getRandomNumbers
 	},
 	obj: {
 		merge: mergeObj,

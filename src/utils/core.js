@@ -190,6 +190,11 @@ const objectS2Ccase = obj => {
 }
 
 const _supportedEncoding = { 'hex': true, 'utf8': true, 'base64': true, 'ascii': true, 'buffer': true }
+// Examples: 
+//	encoder('Hello').to('buffer')
+//	encoder('Hello').to('base64')
+//	encoder('SGVsbG8=', { type:'base64' }).to('utf8')
+//	encoder(buffer).to('utf8')
 const encoder = (obj, options) => {
 	let { type } = options || {}
 	type = type || 'utf8'
@@ -734,7 +739,6 @@ module.exports = {
 		merge: mergeCollection
 	},
 	converter: {
-		batch,
 		s2cCase,
 		c2sCase,
 		objectC2Scase,

@@ -82,7 +82,7 @@ const buildUrl = uriInfo => {
 	let _pathname = pathname
 	// if the explicit extension is the same as the one in the pathname, then keep the pathname
 	// otherwise, overwrite the pathname extension with the explicit one
-	if (_pathname && ext !== undefined && pathnameExt != ext) {
+	if (_pathname && ext && pathnameExt != ext) {
 		const _ext = /^\./.test(ext) ? ext : `.${ext}`
 		_pathname = _pathname.replace(/\.[0-9a-zA-Z]*$/, _ext)
 	} 

@@ -46,7 +46,7 @@ const getUrlInfo = (uri, option={}) => {
 				ext = ''
 			}
 			const pathnameonly = path.posix.extname(pathname) ? path.posix.dirname(pathname) : pathname
-			const contentType = _getContentType(ext)
+			const contentType = getContentType(ext)
 			return { host, protocol, origin, pathname, querystring, hash, ext: ext, uri, shorturi: joinUrlParts(origin, pathname).replace(/\/$/, '') , pathnameonly, contentType }
 		}
 		catch(err) {
@@ -226,7 +226,7 @@ const _supportedContentType = {
 	'.ttf': 'application/font-sfnt',
 	'.otf': 'application/font-sfnt'
 }
-const _getContentType = (ext) => {
+const getContentType = (ext) => {
 	if (!ext)
 		return 'application/octet-stream'
 
@@ -242,6 +242,7 @@ module.exports = {
 	ext:{
 		isPage: isPopularWebPageExt,
 		isImg: isPopularImgExt,
-		isFont: isPopularFontExt
+		isFont: isPopularFontExt,
+		getContentType
 	}
 }

@@ -234,11 +234,20 @@ const getContentType = (ext) => {
 	return contentType || 'application/octet-stream'
 }
 
+/**
+ * Makes a URI ready to be 'regexified'. Example: const uriRegEx = new RegExp(regexReadyUri(uri))
+ * 
+ * @param  {String} uri [description]
+ * @return {String}     [description]
+ */
+const regexReadyUri = uri => (uri || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
 module.exports = {
 	getInfo: getUrlInfo,
 	join: joinUrlParts,
 	makeHtml: makePageHtml,
 	buildUrl,
+	regexReadyUri,
 	ext:{
 		isPage: isPopularWebPageExt,
 		isImg: isPopularImgExt,

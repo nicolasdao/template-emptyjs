@@ -235,7 +235,7 @@ const getContentType = (ext) => {
 }
 
 /**
- * Makes a URI ready to be 'regexified'. Example: const uriRegEx = new RegExp(regexReadyUri(uri))
+ * Makes a URI ready to be 'regexified'. Example: const uriRegEx = new RegExp(regexReadyUri(uri), 'g')
  * 
  * @param  {String} uri [description]
  * @return {String}     [description]

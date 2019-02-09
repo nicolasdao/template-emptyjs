@@ -199,11 +199,76 @@ const runOnce = (fn) => {
 	}
 }
 
+const DEFAULT_RETURN_TIMEOUT = 60*1000 	// 1 minute
+const DEFAULT_EXEC_TIMEOUT = 300*1000 	// 5 minutes
+let _execTracker = {}
+/**
+ * Memory leaks free background execution promises. Make a promise return in any cases after a 
+ * 'timeout.return' period. If the promise is resolved before that 'timeout.return' period, then 
+ * nothing out of the ordinary happens. If the execution goes over the 'timeout.return' period, 
+ * then it carries on in the background. In any cases, the process will be garbage collected.
+ * 
+ * @param  {Function}   execFn  					[description]
+ * @param  {Number}		options.return.timeout
+ * @param  {Number}		options.exec.timeout
+ * @param  {Function}	options.exec.onTimeout
+ * 
+ * @return {String}		results.status 				Values: 'COMPLETED', 'PENDING', 'TIMEOUT'
+ * @return {Object}		results.data 				Value returned by 'execFn'
+ */
+const persistExecution = (execFn,options) => Promise.resolve(null).then(() => {
+	if (!execFn)
+		throw new Error('Missing required \'promise\'')
+
+	if (typeof(execFn) != 'function')
+		throw new Error('Bad argument execption. The input must be a function')
+
+	const { return:r, exec:e } = options || {}
+	const { timeout:returnTimeout=DEFAULT_RETURN_TIMEOUT } = r || {}
+	const { timeout:execTimeout=DEFAULT_EXEC_TIMEOUT, onTimeout } = e || {}
+
+	if (typeof(returnTimeout) != 'number')
+		throw new Error('Bad argument execption. The \'options.return.timeout\' is not a number')
+
+	if (typeof(execTimeout) != 'number')
+		throw new Error('Bad argument execption. The \'options.exec.timeout\' is not a number')
+
+	if (onTimeout && typeof(onTimeout) != 'function')
+		throw new Error('Bad argument execption. The \'options.exec.onTimeout\' is not a function')			
+
+	const pId = identity.new({ long:true })
+	const execFnId = `exec-${pId}`
+	_execTracker[execFnId] = execFn()
+	_execTracker[pId] = Promise.race([delay(execTimeout).then(() => 'execution timeout'), Promise.resolve(null).then(() => _execTracker[execFnId])])
+		
+	return Promise.race([
+		delay(returnTimeout).then(() => ({ status: 'PENDING', data: null })), 
+		Promise.resolve(null)
+			.then(() => _execTracker[pId])
+			.then(res => {
+				_execTracker[execFnId] = null
+				_execTracker[pId] = null
+				const status = res == 'execution timeout' ? 'TIMEOUT' : 'COMPLETED'
+				const next = onTimeout && status == 'TIMEOUT'
+					? Promise.resolve(null).then(() => onTimeout())
+					: Promise.resolve(null)
+
+				return next.then(() => ({ status, data: res }))
+			})
+			.catch(err => {
+				_execTracker[execFnId] = null
+				_execTracker[pId] = null
+				throw err
+			})
+	])
+})
+
 module.exports = {
 	delay,
 	wait,
 	retry,
 	makePromiseQueryable,
 	addTimeout,
-	runOnce
+	runOnce,
+	persistExecution
 }

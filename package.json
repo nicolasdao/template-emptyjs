@@ -30,6 +30,8 @@
     "standard-version": "^4.4.0"
   },
   "dependencies": {
+    "co": "^4.6.0",
+    "co-channel": "^0.6.2",
     "shortid": "^2.2.14"
   }
 }

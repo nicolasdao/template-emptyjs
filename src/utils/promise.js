@@ -275,6 +275,12 @@ const queue = {
 
 			let _taskChn = {}
 			let _taskReadyChn = {}
+			/**
+			 * [description]
+			 * @param  {Function} fn	Parameterless function to execute
+			 * @param  {String}   id	Unique identifier that will group the 'fn' execution in the same fifo queue
+			 * @return {Promise}  		Promise resolving to the result of 'fn'        
+			 */
 			return ({ fn, id }) => new Promise((onSuccess, onFailure) => {
 				if (!fn)
 					onFailure(new Error('Missing required argument \'fn\''))

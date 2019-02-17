@@ -111,24 +111,27 @@ const addTimeout = (p, timeOut=30000) => {
 
 /**
  * [description]
- * @param  {Function} fn        				Parameterless function that must be retried if something goes wrong.
- * @param  {Function} successFn 				(res, options) => Returns an boolean or a Promise returning a boolean. The boolean 
- *                                  			determine if the response is OK or if we need to proceed to a retry. 
- * @param  {Function} failureFn 				(Optional) (error, options) => Returns an boolean or a Promise returning a boolean. The boolean 
- *                                  			determine if the error should be ignore and therefore be considered as a success or if we 
- *                                  			need to proceed to a retry.                         			
+ * @param  {Function} fn        		Parameterless function that must be retried if something goes wrong.
+ * @param  {Function} successFn 		(res, options) => Returns an boolean or a Promise returning a boolean. The boolean 
+ *                                  		determine if the response is OK or if we need to proceed to a retry. 
+ * @param  {Function} failureFn 		(Optional) (error, options) => Returns an boolean or a Promise returning a boolean. The boolean 
+ *                                  		determine if the error should be ignore and therefore be considered as a success or if we 
+ *                                  		need to proceed to a retry.                         			
  * @param  {Number}   options.retryAttempts   	default: 5. Number of retry
  * @param  {Number}   options.attemptsCount   	Current retry count. When that counter reaches the 'retryAttempts', the function stops.
- * @param  {Number}   options.timeOut   		If specified, 'retryAttempts' and 'attemptsCount' are ignored
+ * @param  {Number}   options.timeOut   	If specified, 'retryAttempts' and 'attemptsCount' are ignored
  * @param  {Number}   options.retryInterval   	default: 5000. Time interval in milliseconds between each retry. It can also be a 2 items array.
  *                                             	In that case, the retryInterval is a random number between the 2 ranges (e.g., [10, 100] => 54).
  *                                             	The retry strategy increases the 'retryInterval' by a factor 1.5 after each failed attempt.
  * @param  {Boolean}  options.ignoreError   	In case of constant failure to pass the 'successFn' test, this function will either throw an error
  *                                           	or return the current result without throwing an error if this flag is set to true.
- * @param  {String}   options.errorMsg   		Customize the exception message in case of failure.
+ * @param  {String}   options.errorMsg   	Customize the exception message in case of failure.
  * @param  {String}   options.ignoreFailure   	Only meaningfull when no 'failureFn' function is set. If set to true, then failure from fn 
  *                                             	will cause a retry
- * @return {Promise}             				Promise that return whatever is returned by 'fn'
+ * @return {Promise}             		Promise that return whatever is returned by 'fn'
+ * @catch  {String}   err.message
+ * @catch  {String}   err.stack
+ * @catch  {Object}   err.data			In case of timeout, the data is what was last returned by 'fn'
  */
 const retry = arities(
 	'function fn, function successFn, object options={}',

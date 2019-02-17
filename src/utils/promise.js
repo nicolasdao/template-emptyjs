@@ -176,8 +176,11 @@ const retry = arities(
 								return delay(delayMs).then(() => failureFn 
 									? retry(fn, successFn, failureFn, merge(options, { startTime, attemptsCount:attemptsCount+1 }))
 									: retry(fn, successFn, merge(options, { startTime, attemptsCount:attemptsCount+1 })))
-							} else
-								throw new Error('timeout')
+							} else {
+								let e = new Error('timeout')
+								e.data = data
+								throw e
+							}
 						} else if (attemptsCount < retryAttempts) {
 							const delayMs = Math.round(delayFactor*retryInterval)
 							return delay(delayMs).then(() => failureFn
@@ -185,8 +188,11 @@ const retry = arities(
 								: retry(fn, successFn, merge(options, { attemptsCount:attemptsCount+1 })))
 						} else if (options.ignoreError)
 							return data
-						else 
-							throw new Error(options.errorMsg ? options.errorMsg : `${retryAttempts} attempts to retry the procedure failed to pass the test`)
+						else {
+							let e = new Error(options.errorMsg ? options.errorMsg : `${retryAttempts} attempts to retry the procedure failed to pass the test`)
+							e.data = data
+							throw e
+						}
 					} else 
 						throw error
 				}))

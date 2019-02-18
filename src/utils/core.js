@@ -433,12 +433,13 @@ const convertShortDateStringToDate = (date, options={}) => {
 //////////////////////////                           START IDENTITY                             ////////////////////////////////
 
 /**
- * Returns a unique identifier (default length 9)
- * @param  {Boolean} options.short 		[description]
- * @param  {Boolean} options.long 		[description]
- * @param  {String}  options.sep 		Not valid when options.short is true
- * @param  {Boolean} options.lowerCase 		[description]
- * @return {[type]}         			[description]
+ * Returns a unique identifier (default length 10)
+ * @param  {Boolean} options.short 		Default false. If set to true, the id length will be 5
+ * @param  {Boolean} options.long 		Default false. If set to true, the id length will be 20
+ * @param  {String}  options.sep 		Default ''. Not valid when options.short is true
+ * @param  {Boolean} options.lowerCase 		Default false.
+ * @param  {Boolean} options.uriReady 		Default false. When true, this will encode the id so that it can be used into a URI
+ * @return {String}         			[description]
  */
 const newId = (options={}) => {
 	const sep = options.sep || ''
@@ -446,8 +447,8 @@ const newId = (options={}) => {
 		? () => shortid.generate().replace(/-/g, 'r').replace(/_/g, '9').toLowerCase().slice(0,5)
 		: () => shortid.generate().replace(/-/g, 'r').replace(/_/g, '9').slice(0,5)
 
-	return options.short ? getId() : options.long ? `${getId()}${sep}${getId()}${sep}${getId()}${sep}${getId()}` : `${getId()}${sep}${getId()}`
-
+	const id = options.short ? getId() : options.long ? `${getId()}${sep}${getId()}${sep}${getId()}${sep}${getId()}` : `${getId()}${sep}${getId()}`
+	return options.uriReady ? encodeURIComponent(id) : id
 }
 
 //////////////////////////                           START IDENTITY                             ////////////////////////////////

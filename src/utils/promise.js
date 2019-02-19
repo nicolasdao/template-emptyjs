@@ -309,12 +309,13 @@ const queue = {
 						yield _taskChn[_id].take()
 						const result = yield _fn()
 						onSuccess(result)
+					} catch (err) {
+						onFailure(err)
+					} finally {
 						if (!_taskReadyChn[_id].sput(_id)) {
 							// there are no task to be added on that channel, so dispose it
 							_taskReadyChn[_id] = null
 						}
-					} catch (err) {
-						onFailure(err)
 					}
 				})
 

@@ -6,8 +6,6 @@
  * LICENSE file in the root directory of this source tree.
 */
 
-const co = require('co')
-const Channel = require('co-channel')
 const { obj: { merge }, identity, math } = require('./core')
 const { arities } = require('./functional')
 
@@ -274,72 +272,6 @@ const persistExecution = (execFn,options) => Promise.resolve(null).then(() => {
 	])
 })
 
-const queue = {
-	fifo: {
-		new({ name }) {
-			if (!name)
-				throw new Error('Missing required argument \'name\'')
-			if (typeof(name) != 'string')
-				throw new Error(`Wrong argument exception. 'name' must be a string (current type: ${typeof(name)})`)
-
-			let _taskChn = {}
-			let _taskReadyChn = {}
-			/**
-			 * [description]
-			 * @param  {Function} fn	Parameterless function to execute
-			 * @param  {String}   id	Unique identifier that will group the 'fn' execution in the same fifo queue
-			 * @return {Promise}  		Promise resolving to the result of 'fn'        
-			 */
-			return ({ fn, id }) => new Promise((onSuccess, onFailure) => {
-				if (!fn)
-					onFailure(new Error('Missing required argument \'fn\''))
-				if (!id)
-					onFailure(new Error('Missing required argument \'id\''))
-				if (typeof(fn) != 'function')
-					onFailure(new Error(`Wrong argument exception. 'fn' must be a function (current type: ${typeof(fn)})`))
-
-				const _id = `${name}_${id}`
-				const _fn = () => Promise.resolve(null).then(() => fn())
-
-				if (!_taskChn[_id]) 
-					_taskChn[_id] = new Channel()
-
-				co(function *() {
-					try {
-						yield _taskChn[_id].take()
-						const result = yield _fn()
-						onSuccess(result)
-					} catch (err) {
-						onFailure(err)
-					} finally {
-						if (!_taskReadyChn[_id].sput(_id)) {
-							// there are no task to be added on that channel, so dispose it
-							_taskReadyChn[_id] = null
-						}
-					}
-				})
-
-				co(function *() {
-					try {
-						if (!_taskReadyChn[_id]) {
-							_taskReadyChn[_id] = new Channel
-							yield _taskChn[_id].put(_id)
-						} else {
-							yield _taskReadyChn[_id].take()
-							if (!_taskChn[_id].sput(_id)) {
-								// there are no task to be added on that channel, so dispose it
-								_taskChn[_id] = null
-							}
-						}
-					} catch (err) {
-						onFailure(err)
-					}
-				})
-			})
-		}
-	}
-}
-
 module.exports = {
 	delay,
 	wait,
@@ -347,6 +279,5 @@ module.exports = {
 	makePromiseQueryable,
 	addTimeout,
 	runOnce,
-	persistExecution,
-	queue
+	persistExecution
 }

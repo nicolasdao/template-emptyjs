@@ -60,7 +60,7 @@ Our other open-sourced projects:
 * [__*aws-cloudwatch-logger*__](https://github.com/nicolasdao/aws-cloudwatch-logger): Promise based logger for AWS CloudWatch LogStream.
 
 # License
-Copyright (c) 2018, Neap Pty Ltd.
+Copyright (c) 2017-2019, Neap Pty Ltd.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

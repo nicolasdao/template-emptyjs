@@ -12,10 +12,11 @@
   },
   "homepage": "https://github.com/nicolasdao/template-emptyjs#readme",
   "scripts": {
-    "start": "NODE_ENV=production node index.js",
+    "dev": "NODE_ENV=dev node-dev index.js",
     "lint": "eslint index.js src/ test/ --fix",
     "push": "git push --follow-tags origin master",
     "rls": "standard-version --release-as",
+    "start": "NODE_ENV=production node index.js",
     "test": "mocha",
     "v": "node -e \"console.log(require('./package.json').version)\""
   },
@@ -30,8 +31,6 @@
     "standard-version": "^4.4.0"
   },
   "dependencies": {
-    "co": "^4.6.0",
-    "co-channel": "^0.6.2",
     "shortid": "^2.2.14"
   }
 }

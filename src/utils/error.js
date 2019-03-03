@@ -6,9 +6,22 @@
  * LICENSE file in the root directory of this source tree.
 */
 
-const throwIfMissing = (value, valueName) => {
+const throwIfUndefined = (value, valueName) => {
+	if (value === undefined)
+		throw new Error(`Missing required argument${valueName ? ` '${valueName}'` : ''}.`)
+	return value
+}
+
+const throwIfNotTruthy = (value, valueName) => {
 	if (!value)
 		throw new Error(`Missing required argument${valueName ? ` '${valueName}'` : ''}.`)
+	return value
+}
+
+const throwIfNotNumber = (value, valueName) => {
+	const t = typeof(value)
+	if (t != 'number')
+		throw new Error(`Wrong argument exception. ${valueName ? ` '${valueName}'` : 'The value'} must be a number (current: ${t}).`)
 	return value
 }
 
@@ -68,7 +81,9 @@ const throwIfGreaterThan = (value1, value2, valueName1, valueName2) => {
 }
 
 module.exports = {
-	throwIfMissing,
+	throwIfUndefined,
+	throwIfNotTruthy,
+	throwIfNotNumber,
 	throwIfWrongValue,
 	throwIfNoMatch,
 	throwIfGreaterThan

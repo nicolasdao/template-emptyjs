@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
 */
 
-const shortid = require('shortid')
+const crypto = require('crypto')
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -444,8 +444,8 @@ const convertShortDateStringToDate = (date, options={}) => {
 const newId = (options={}) => {
 	const sep = options.sep || ''
 	const getId = options.lowerCase 
-		? () => shortid.generate().replace(/-/g, 'r').replace(/_/g, '9').toLowerCase().slice(0,5)
-		: () => shortid.generate().replace(/-/g, 'r').replace(/_/g, '9').slice(0,5)
+		? () => crypto.randomBytes(7).toString('base64').replace(/[+=]/g, 'p').replace(/\//g, '9').toLowerCase().slice(0,5)
+		: () => crypto.randomBytes(7).toString('base64').replace(/[+=]/g, 'p').replace(/\//g, '9').slice(0,5)
 
 	const id = options.short ? getId() : options.long ? `${getId()}${sep}${getId()}${sep}${getId()}${sep}${getId()}` : `${getId()}${sep}${getId()}`
 	return options.uriReady ? encodeURIComponent(id) : id

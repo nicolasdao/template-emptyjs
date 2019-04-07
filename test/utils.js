@@ -7,7 +7,7 @@
 */
 
 const { assert } = require('chai')
-const { url, obj:{merge} } = require('../src/utils')
+const { url, obj:{merge,mirror} } = require('../src/utils')
 
 describe('utils', () => {
 	describe('#url.getInfo', () => {
@@ -73,7 +73,29 @@ describe('utils', () => {
 			assert.deepEqual(merge(o1,o2), { id:1, project:{ name:'P1', updated:'Wednesday', description:'Cool cool'} })
 		})
 	})
+	describe('#obj.mirror', () => {
+		it('Should merge objects', () => {
+			const o1 = {
+				project: {
+					name: 'P1',
+					updated: 'Tuesday'
+				}
+			}
+			const o2 = {
+				id: 1,
+				project: {
+					description: 'Cool cool',
+					updated: 'Wednesday'
+				}
+			}
+
+			assert.deepEqual(mirror(o1,o2), { id:1, project:{ updated:'Tuesday', description:'Cool cool'} })
+			assert.deepEqual(mirror(o2,o1), { project:{ name: 'P1', updated:'Wednesday'} })
+		})
+	})
 })
+
+
 
 
 

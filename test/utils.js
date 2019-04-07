@@ -7,7 +7,7 @@
 */
 
 const { assert } = require('chai')
-const { url } = require('../src/utils')
+const { url, obj:{merge} } = require('../src/utils')
 
 describe('utils', () => {
 	describe('#url.getInfo', () => {
@@ -54,7 +54,32 @@ describe('utils', () => {
 			assert.equal(new_uri_01, 'https://neap.co/search/splash.html?&facetGeoRegion=%5B%22au%3A0%22%5D&origin=FACETED_SEARCH&title=founder%20%26%20director&age=37#hello', '01')
 		})
 	})
+	describe('#obj.merge', () => {
+		it('Should merge objects', () => {
+			const o1 = {
+				project: {
+					name: 'P1',
+					updated: 'Tuesday'
+				}
+			}
+			const o2 = {
+				id: 1,
+				project: {
+					description: 'Cool cool',
+					updated: 'Wednesday'
+				}
+			}
+
+			assert.deepEqual(merge(o1,o2), { id:1, project:{ name:'P1', updated:'Wednesday', description:'Cool cool'} })
+		})
+	})
 })
+
+
+
+
+
+
 
 
 

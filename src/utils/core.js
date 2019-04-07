@@ -707,6 +707,50 @@ const objAreSame = (o_1, o_2, options={}) => {
 	return failed(`Those 2 objects are not equal: ${o_1}, ${o_2}`) 
 }
 
+const NON_OBJECT_TYPES = { 'number':true, 'string':true, 'boolean':true, 'undefined':true, }
+/**
+ * Returns more granular types than 'typeof'. Supported types: 'number', 'string', 'boolean', 'undefined', 'array', 'date', 'object', null
+ * @param  {Object} obj 
+ * @return {String}     
+ */
+const getObjType = obj => {
+	const t = typeof(obj)
+	if (NON_OBJECT_TYPES[t])
+		return t 
+	if (obj === null)
+		return null
+	if (Array.isArray(obj))
+		return 'array'
+	if (obj instanceof Date)
+		return 'date'
+
+	return t
+}
+
+const mirror = (obj, refObj) => {
+	const refProps = Object.keys(refObj) || []
+	const props = (Object.keys(obj) || [])
+	const propsToKeep = props.filter(p => refProps.some(pp => pp == p))
+	const propsToAdd = refProps.filter(p => !props.some(pp => pp == p))
+	return [...propsToKeep, ...propsToAdd].reduce((acc,prop) => {
+		const v = obj[prop]
+		const refV = refObj[prop]
+		if (v === undefined)
+			acc[prop] = refV
+		else {
+			const vType = getObjType(v)
+			const refVtype = getObjType(refV)
+			if (vType == 'object' && refVtype == 'object')
+				acc[prop] = mirror(v,refV)
+			else if (vType == refVtype)
+				acc[prop] = v
+			else 
+				acc[prop] = refV
+		}
+		return acc
+	},{})
+}
+
 //////////////////////////                         START OBJECT HELPERS                                 ////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -774,6 +818,8 @@ module.exports = {
 	},
 	obj: {
 		merge: mergeObj,
+		mirror,
+		getType: getObjType,
 		isEmpty: isEmptyObj,
 		isObj,
 		diff: getDiff,

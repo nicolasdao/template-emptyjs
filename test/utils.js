@@ -7,7 +7,7 @@
 */
 
 const { assert } = require('chai')
-const { url, obj:{merge,mirror} } = require('../src/utils')
+const { url, obj:{ merge, mirror, set:setProperty} } = require('../src/utils')
 
 describe('utils', () => {
 	describe('#url.getInfo', () => {
@@ -74,7 +74,7 @@ describe('utils', () => {
 		})
 	})
 	describe('#obj.mirror', () => {
-		it('Should merge objects', () => {
+		it('Should mirror an object properties', () => {
 			const o1 = {
 				project: {
 					name: 'P1',
@@ -93,15 +93,16 @@ describe('utils', () => {
 			assert.deepEqual(mirror(o2,o1), { project:{ name: 'P1', updated:'Wednesday'} })
 		})
 	})
+	describe('#obj.set', () => {
+		it('Should set a specific object\'s property value/', () => {
+			const o = setProperty(setProperty({ name:'Nic' }, 'company.name', 'Neap Pty Ltd'), 'age', 38)
+
+			assert.equal(o.name, 'Nic', '01')
+			assert.equal(o.company.name, 'Neap Pty Ltd', '02')
+			assert.equal(o.age, 38, '03')
+		})
+	})
 })
-
-
-
-
-
-
-
-
 
 
 

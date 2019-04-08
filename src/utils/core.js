@@ -751,6 +751,32 @@ const mirror = (obj, refObj) => {
 	},{})
 }
 
+/**
+ * Sets an object's property with a specific value. 
+ * 
+ * @param  {Object} obj   Original object.
+ * @param  {String} prop  Property to be set (e.g., 'name' or 'project.name').
+ * @param  {Object} value Value to be set with.
+ * @return {Object}       Original object with the property set.
+ */
+const setProperty = (obj,prop, value) => {
+	if (!prop)
+		return obj 
+	
+	obj = obj || {}
+	const props = prop.split('.')
+	const l = props.length-1
+	props.reduce((acc,p,idx) => {
+		if (idx == l)
+			acc[p] = value 
+		else if (!acc[p])
+			acc[p] = {}
+		return acc[p]
+	},obj)
+
+	return obj
+}
+
 //////////////////////////                         START OBJECT HELPERS                                 ////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -820,6 +846,7 @@ module.exports = {
 		merge: mergeObj,
 		mirror,
 		getType: getObjType,
+		'set':setProperty,
 		isEmpty: isEmptyObj,
 		isObj,
 		diff: getDiff,

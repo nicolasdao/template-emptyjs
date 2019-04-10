@@ -46,7 +46,13 @@ const headTail = (a, headSize=1) => (a || []).reduce((acc, v, idx) => {
 	return acc
 }, [[],[]])
 
-
+/**
+ * Removes duplicate items from array. 
+ * 
+ * @param  {[Object]} a  		Array of items
+ * @param  {Function} fn 		Optional. Default x => x. Function used to pick a property used to define identity.
+ * @return {[Object]} output    Array 'a' with unique items.
+ */
 const uniq = (a, fn) => {
 	fn = fn || (x => x)
 	return Object.keys((a || []).reduce((acc,x) => {

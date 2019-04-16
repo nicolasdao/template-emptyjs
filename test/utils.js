@@ -55,7 +55,7 @@ describe('utils', () => {
 		})
 	})
 	describe('#obj.merge', () => {
-		it('Should merge objects', () => {
+		it('01 - Should merge objects', () => {
 			const o1 = {
 				project: {
 					name: 'P1',
@@ -71,6 +71,23 @@ describe('utils', () => {
 			}
 
 			assert.deepEqual(merge(o1,o2), { id:1, project:{ name:'P1', updated:'Wednesday', description:'Cool cool'} })
+		})
+		it('02 - Should support nullifying certain propertiess', () => {
+			const o1 = {
+				project: {
+					name: 'P1',
+					updated: 'Tuesday'
+				}
+			}
+			const o2 = {
+				id: 1,
+				project: {
+					description: 'Cool cool',
+					updated: null
+				}
+			}
+
+			assert.deepEqual(merge(o1,o2), { id:1, project:{ name:'P1', updated:null, description:'Cool cool'} })
 		})
 	})
 	describe('#obj.mirror', () => {

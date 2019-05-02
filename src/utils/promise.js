@@ -7,7 +7,6 @@
 */
 
 const { obj: { merge }, identity, math } = require('./core')
-const { arities } = require('./functional')
 
 /**
  * Create an empty promise that returns after a certain delay
@@ -111,93 +110,91 @@ const addTimeout = (p, timeOut=30000) => {
  * [description]
  * @param  {Function} fn        		Parameterless function that must be retried if something goes wrong.
  * @param  {Function} successFn 		(res, options) => Returns an boolean or a Promise returning a boolean. The boolean 
- *                                  		determine if the response is OK or if we need to proceed to a retry. 
+ *                                 		determine if the response is OK or if we need to proceed to a retry. 
  * @param  {Function} failureFn 		(Optional) (error, options) => Returns an boolean or a Promise returning a boolean. The boolean 
- *                                  		determine if the error should be ignore and therefore be considered as a success or if we 
- *                                  		need to proceed to a retry.                         			
- * @param  {Number}   options.retryAttempts   	default: 5. Number of retry
- * @param  {Number}   options.attemptsCount   	Current retry count. When that counter reaches the 'retryAttempts', the function stops.
- * @param  {Number}   options.timeOut   	If specified, 'retryAttempts' and 'attemptsCount' are ignored
- * @param  {Number}   options.retryInterval   	default: 5000. Time interval in milliseconds between each retry. It can also be a 2 items array.
- *                                             	In that case, the retryInterval is a random number between the 2 ranges (e.g., [10, 100] => 54).
- *                                             	The retry strategy increases the 'retryInterval' by a factor 1.5 after each failed attempt.
- * @param  {Boolean}  options.ignoreError   	In case of constant failure to pass the 'successFn' test, this function will either throw an error
- *                                           	or return the current result without throwing an error if this flag is set to true.
- * @param  {String}   options.errorMsg   	Customize the exception message in case of failure.
- * @param  {String}   options.ignoreFailure   	Only meaningfull when no 'failureFn' function is set. If set to true, then failure from fn 
- *                                             	will cause a retry
+ *                                  	determine if the error should be ignore and therefore be considered as a success or if we 
+ *                                  	need to proceed to a retry.                         			
+ * @param  {Number}   retryAttempts   	(Optional) default: 5. Number of retry
+ * @param  {Number}   attemptsCount   	(Optional) Current retry count. When that counter reaches the 'retryAttempts', the function stops.
+ * @param  {Number}   timeOut   		(Optional) If specified, 'retryAttempts' and 'attemptsCount' are ignored
+ * @param  {Number}   retryInterval   	(Optional) default: 5000. Time interval in milliseconds between each retry. It can also be a 2 items array.
+ *                                    	In that case, the retryInterval is a random number between the 2 ranges (e.g., [10, 100] => 54).
+ *                                     	The retry strategy increases the 'retryInterval' by a factor 1.5 after each failed attempt.
+ * @param  {Boolean}  ignoreError   	(Optional) In case of constant failure to pass the 'successFn' test, this function will either throw an error
+ *                                     	or return the current result without throwing an error if this flag is set to true.
+ * @param  {String}   errorMsg   		(Optional) Customize the exception message in case of failure.
+ * @param  {String}   ignoreFailure   	(Optional) Only meaningfull when no 'failureFn' function is set. If set to true, then failure from fn 
+ *                                     	will cause a retry
  * @return {Promise}             		Promise that return whatever is returned by 'fn'
  * @catch  {String}   err.message
  * @catch  {String}   err.stack
  * @catch  {Object}   err.data			In case of timeout, the data is what was last returned by 'fn'
  */
-const retry = arities(
-	'function fn, function successFn, object options={}',
-	'function fn, function successFn, function failureFn, object options={}',
-	({ fn, successFn, failureFn, options={} }) => { 
-		const start = Date.now()
-		return Promise.resolve(null)
-			.then(() => fn()).then(data => ({ error: null, data }))
-			.catch(error => { 
-				if (options.ignoreFailure && !failureFn)
-					failureFn = () => true
-				return { error, data: null }
+const retry = ({ fn, successFn, failureFn, ignoreFailure, retryAttempts, retryInterval, attemptsCount, timeOut, startTime, ignoreError, errorMsg }) => { 
+	const options = { ignoreFailure, retryAttempts, retryInterval, attemptsCount, timeOut, startTime, ignoreError, errorMsg  }
+	const start = Date.now()
+	return Promise.resolve(null)
+		.then(() => fn()).then(data => ({ error: null, data }))
+		.catch(error => { 
+			if (options.ignoreFailure && !failureFn)
+				failureFn = () => true
+			return { error, data: null }
+		})
+		.then(({ error, data }) => Promise.resolve(null)
+			.then(() => {
+				if (error && failureFn)
+					return failureFn(error, options)
+				else if (error)
+					throw error 
+				else
+					return successFn(data, options)
 			})
-			.then(({ error, data }) => Promise.resolve(null)
-				.then(() => {
-					if (error && failureFn)
-						return failureFn(error, options)
-					else if (error)
-						throw error 
-					else
-						return successFn(data, options)
-				})
-				.then(passed => {
-					if (!error && passed)
-						return data
-					else if ((!error && !passed) || (error && passed)) {
-						let { retryAttempts=5, retryInterval=5000, attemptsCount=0, timeOut=null, startTime=null } = options
-						const delayFactor = (attemptsCount+1) <= 1 ? 1 : Math.pow(1.5, attemptsCount)
-						if (timeOut > 0) {
-							startTime = startTime || start
-							if (Date.now() - startTime < timeOut) {
-								const explicitRetryInterval = passed && passed.retryInterval > 0 ? passed.retryInterval : null
-								const i = (!explicitRetryInterval && Array.isArray(retryInterval) && retryInterval.length > 1)
-									? (() => {
-										if (typeof(retryInterval[0]) != 'number' || typeof(retryInterval[1]) != 'number')
-											throw new Error(`Wrong argument exception. When 'options.retryInterval' is an array, all elements must be numbers. Current: [${retryInterval.join(', ')}].`)
-										if (retryInterval[0] > retryInterval[1])
-											throw new Error(`Wrong argument exception. When 'options.retryInterval' is an array, the first element must be strictly greater than the second. Current: [${retryInterval.join(', ')}].`)
+			.then(passed => {
+				if (!error && passed)
+					return data
+				else if ((!error && !passed) || (error && passed)) {
+					let { retryAttempts=5, retryInterval=5000, attemptsCount=0, timeOut=null, startTime=null } = options
+					const delayFactor = (attemptsCount+1) <= 1 ? 1 : Math.pow(1.5, attemptsCount)
+					if (timeOut > 0) {
+						startTime = startTime || start
+						if (Date.now() - startTime < timeOut) {
+							const explicitRetryInterval = passed && passed.retryInterval > 0 ? passed.retryInterval : null
+							const i = (!explicitRetryInterval && Array.isArray(retryInterval) && retryInterval.length > 1)
+								? (() => {
+									if (typeof(retryInterval[0]) != 'number' || typeof(retryInterval[1]) != 'number')
+										throw new Error(`Wrong argument exception. When 'options.retryInterval' is an array, all elements must be numbers. Current: [${retryInterval.join(', ')}].`)
+									if (retryInterval[0] > retryInterval[1])
+										throw new Error(`Wrong argument exception. When 'options.retryInterval' is an array, the first element must be strictly greater than the second. Current: [${retryInterval.join(', ')}].`)
 
-										return math.randomNumber(retryInterval[0], retryInterval[1])
-									})()
-									: (explicitRetryInterval || retryInterval)
+									return math.randomNumber(retryInterval[0], retryInterval[1])
+								})()
+								: (explicitRetryInterval || retryInterval)
 
-								const delayMs = Math.round(delayFactor*i)
-								return delay(delayMs).then(() => failureFn 
-									? retry(fn, successFn, failureFn, merge(options, { startTime, attemptsCount:attemptsCount+1 }))
-									: retry(fn, successFn, merge(options, { startTime, attemptsCount:attemptsCount+1 })))
-							} else {
-								let e = new Error('timeout')
-								e.data = data
-								throw e
-							}
-						} else if (attemptsCount < retryAttempts) {
-							const delayMs = Math.round(delayFactor*retryInterval)
-							return delay(delayMs).then(() => failureFn
-								? retry(fn, successFn, failureFn, merge(options, { attemptsCount:attemptsCount+1 }))
-								: retry(fn, successFn, merge(options, { attemptsCount:attemptsCount+1 })))
-						} else if (options.ignoreError)
-							return data
-						else {
-							let e = new Error(options.errorMsg ? options.errorMsg : `${retryAttempts} attempts to retry the procedure failed to pass the test`)
+							const delayMs = Math.round(delayFactor*i)
+							return delay(delayMs).then(() => failureFn 
+								? retry(fn, successFn, failureFn, merge(options, { startTime, attemptsCount:attemptsCount+1 }))
+								: retry(fn, successFn, merge(options, { startTime, attemptsCount:attemptsCount+1 })))
+						} else {
+							let e = new Error('timeout')
 							e.data = data
 							throw e
 						}
-					} else 
-						throw error
-				}))
-	})
+					} else if (attemptsCount < retryAttempts) {
+						const delayMs = Math.round(delayFactor*retryInterval)
+						return delay(delayMs).then(() => failureFn
+							? retry(fn, successFn, failureFn, merge(options, { attemptsCount:attemptsCount+1 }))
+							: retry(fn, successFn, merge(options, { attemptsCount:attemptsCount+1 })))
+					} else if (options.ignoreError)
+						return data
+					else {
+						let e = new Error(options.errorMsg ? options.errorMsg : `${retryAttempts} attempts to retry the procedure failed to pass the test`)
+						e.data = data
+						throw e
+					}
+				} else 
+					throw error
+			}))
+}
 
 const runOnce = (fn) => {
 	let _fn

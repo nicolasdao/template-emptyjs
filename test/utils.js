@@ -7,7 +7,7 @@
 */
 
 const { assert } = require('chai')
-const { url, obj:{ merge, mirror, set:setProperty} } = require('../src/utils')
+const { url, obj:{ merge, mirror, set:setProperty}, promise:{ retry } } = require('../src/utils')
 
 describe('utils', () => {
 	describe('#url.getInfo', () => {
@@ -137,6 +137,100 @@ describe('utils', () => {
 			assert.equal(o.name, 'Nic', '01')
 			assert.equal(o.company.name, 'Neap Pty Ltd', '02')
 			assert.equal(o.age, 38, '03')
+		})
+	})
+	describe('#promise.retry', () => {
+		it('01 - Should retry 5 times the failing functions before fully failing', done => {
+			let counter = 0
+			const fn = () => { 
+				throw new Error(`${++counter}`)
+			}
+
+			retry({ fn, retryInterval:2 })
+				.then(() => done(new Error('Should have failed')))
+				.catch(err => {
+					assert.equal(err.message, '5 attempts to retry the procedure failed to pass the test.', '01')
+					assert.equal(err.data.error.message, '6',)
+					done()
+				})
+		})
+		it('02 - Should eventually succeed if 5 retries are enough.', done => {
+			let counter = 0
+			const fn = () => { 
+				if (counter == 3)
+					return { message:'yes' }
+				throw new Error(`${++counter}`)
+			}
+
+			retry({ fn, retryInterval:2 })
+				.then(data => {
+					assert.equal(data.message, 'yes', '01')
+					assert.equal(counter, 3, '02')
+					done()
+				})
+				.catch(err => {
+					done(new Error(`Should have worked. Details: ${err.message}\n${err.stack}`))
+				})
+		})
+		it('03 - Should not retry when some specific error occurs.', done => {
+			let counter = 0
+			const fn = () => { 
+				throw new Error(`${++counter}`)
+			}
+
+			const retryOnFailure = (error) => error.message != '3'
+
+			retry({ fn, retryInterval:2, retryOnFailure })
+				.then(() => done(new Error('Should have failed')))
+				.catch(err => {
+					assert.equal(err.message, '3', '01')
+					done()
+				})
+				.catch(done)
+		})
+		it('04 - Should retry when some valid response fails to pass the test.', done => {
+			let counter = 0
+			const fn = () => ++counter
+
+			const retryOnSuccess = (data) => data < 3
+
+			retry({ fn, retryInterval:2, retryOnSuccess })
+				.then(data => {
+					assert.equal(data, 3, '01')
+					assert.equal(counter, 3, '02')
+					done()
+				})
+				.catch(err => {
+					done(new Error(`Should have worked. Details: ${err.message}\n${err.stack}`))
+				})
+		})
+		it('05 - Should support modifying the retry attempts.', done => {
+			let counter = 0
+			const fn = () => ++counter
+
+			const retryOnSuccess = (data) => data < 3
+
+			retry({ fn, retryInterval:2, retryOnSuccess, retryAttempts:1 })
+				.then(() => done(new Error('Should have failed')))
+				.catch(err => {
+					assert.equal(err.message, '1 attempt to retry the procedure failed to pass the test.', '01')
+					done()
+				})
+				.catch(done)
+		})
+		it('06 - Should support timing out.', done => {
+			let counter = 0
+			const fn = () => ++counter
+
+			const retryOnSuccess = (data) => data < 3
+
+			retry({ fn, retryOnSuccess, timeout:20 })
+				.then(() => done(new Error('Should have failed')))
+				.catch(err => {
+					assert.equal(err.message, 'Retry method timeout.', '01')
+					done()
+				})
+				.catch(done)
 		})
 	})
 })

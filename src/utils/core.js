@@ -165,7 +165,7 @@ const objectC2Scase = obj => {
 	return Object.keys(obj).reduce((acc, key) => {
 		const v = obj[key]
 		const p = c2sCase(key)
-		if (v && typeof(v) == 'object') {
+		if (v && typeof(v) == 'object' && !(v instanceof Date)) {
 			if (Array.isArray(v))
 				acc[p] = v.map(x => objectC2Scase(x))
 			else
@@ -184,7 +184,7 @@ const objectS2Ccase = obj => {
 	return Object.keys(obj).reduce((acc, key) => {
 		const v = obj[key]
 		const p = s2cCase(key)
-		if (v && typeof(v) == 'object') {
+		if (v && typeof(v) == 'object' && !(v instanceof Date)) {
 			if (Array.isArray(v))
 				acc[p] = v.map(x => objectS2Ccase(x))
 			else

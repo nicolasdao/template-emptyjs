@@ -108,6 +108,7 @@ module.exports = {
 	throwIfNotNumber,
 	throwIfWrongValue,
 	throwIfNoMatch,
-	throwIfGreaterThan
+	throwIfGreaterThan,
+	throwIfNotBetween
 }
 

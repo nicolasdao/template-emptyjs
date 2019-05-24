@@ -80,6 +80,28 @@ const throwIfGreaterThan = (value1, value2, valueName1, valueName2) => {
 	}
 }
 
+// e.g., throwIfNotBetween(age, 'age', [18, 65])
+const throwIfNotBetween = (value, valueName, validValues) => {
+	if (!value)
+		throw new Error('Failed to test value against a list of valid value. No value was passed.')
+	if (!valueName)
+		throw new Error('Failed to test value against a list of valid value. Missing second argument \'valueName\'.')
+	if (typeof(valueName) != 'string')
+		throw new Error('Failed to test value against a list of valid value. Wrong argument exception. The second argument \'valueName\' must be a string.')
+	if (!validValues)
+		throw new Error('Failed to test value against a list of valid value. Missing third required argument \'validValues\'.')
+	if (validValues.length != 2)
+		throw new Error('Failed to test value against a list of valid value. 3rd argument \'validValues\' must be an array with 2 values.')
+	if (validValues[0] > validValues[1])
+		throw new Error('Failed to test value against a list of valid value. 1st element of the \'validValues\' array must be smaller or equal to the 2nd element.')
+
+	const valid = validValues[0] <= value && value <= validValues[1]
+	if (valid)
+		return value
+	else
+		throw new Error(`Value for variable '${valueName}' is invalid. ${value} is not between ${validValues[0]} and ${validValues[1]}`)
+}
+
 module.exports = {
 	throwIfUndefined,
 	throwIfNotTruthy,

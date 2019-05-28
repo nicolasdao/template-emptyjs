@@ -148,7 +148,7 @@ const mergeCollection = (...collections) => {
  * @param  {String} s 	e.g., "hello_world"
  * @return {String}   	e.g., "helloWorld"
  */
-const s2cCase = s => (s || '').replace(/\s/g, '').toLowerCase().split(/(?=_.{1})/g).reduce((result, part) => result + (result ? (part.slice(1,2).toUpperCase() + part.slice(2)) : part), '')
+const s2cCase = s => (s || '').replace(/_+/g,'_').replace(/_[^_]/g, m => m[1].toUpperCase())
 
 /**
  * Convert camel case to snake case

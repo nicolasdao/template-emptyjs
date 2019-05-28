@@ -7,7 +7,7 @@
 */
 
 const { assert } = require('chai')
-const { url, obj:{ merge, mirror, set:setProperty}, promise:{ retry } } = require('../src/utils')
+const { url, obj:{ merge, mirror, set:setProperty}, converter: { objectS2Ccase, s2cCase }, promise:{ retry } } = require('../src/utils')
 
 describe('utils', () => {
 	describe('#url.getInfo', () => {
@@ -137,6 +137,28 @@ describe('utils', () => {
 			assert.equal(o.name, 'Nic', '01')
 			assert.equal(o.company.name, 'Neap Pty Ltd', '02')
 			assert.equal(o.age, 38, '03')
+		})
+	})
+	describe('#converter.s2cCase', () => {
+		it(`Should convert a snake case string to camel case.`, () => {
+			assert.equal(s2cCase('moreInfo'), 'moreInfo','01')
+			assert.equal(s2cCase('first_name'), 'firstName','02')
+			assert.equal(s2cCase('place_of_birth'), 'placeOfBirth','03')
+			assert.equal(s2cCase('Place_ofBiRth'), 'PlaceOfBiRth','04')
+			assert.equal(s2cCase('Place_of___biRth'), 'PlaceOfBiRth','04')
+		})
+	})
+	describe('#converter.objectC2Scase', () => {
+		it(`Should convert an object with snake case fields to camel case fields.`, () => {
+			const o = objectS2Ccase({
+				moreInfo: 'Hello',
+				first_name:'Nic',
+				place_of_birth: 'Liege'
+			})
+			assert.equal(Object.keys(o).length, 3,'01')
+			assert.equal(o.moreInfo, 'Hello','02')
+			assert.equal(o.firstName, 'Nic','03')
+			assert.equal(o.placeOfBirth, 'Liege','04')
 		})
 	})
 	describe('#promise.retry', () => {

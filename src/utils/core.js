@@ -143,6 +143,13 @@ const mergeCollection = (...collections) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////                           START CONVERTER                           	////////////////////////////////
 
+const nbrToCurrency = (nbr, symbol='$') => {
+	if (typeof(nbr) != 'number')
+		return '$0.00'
+
+	return `${symbol}${nbr.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`
+}
+
 /**
  * Convert snake case to camel case
  * @param  {String} s 	e.g., "hello_world"
@@ -820,7 +827,8 @@ module.exports = {
 		c2sCase,
 		objectC2Scase,
 		objectS2Ccase,
-		encoder
+		encoder,
+		nbrToCurrency
 	},
 	date: {
 		timestamp: getTimestamp,

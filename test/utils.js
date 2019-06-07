@@ -140,7 +140,7 @@ describe('utils', () => {
 		})
 	})
 	describe('#converter.s2cCase', () => {
-		it(`Should convert a snake case string to camel case.`, () => {
+		it('Should convert a snake case string to camel case.', () => {
 			assert.equal(s2cCase('moreInfo'), 'moreInfo','01')
 			assert.equal(s2cCase('first_name'), 'firstName','02')
 			assert.equal(s2cCase('place_of_birth'), 'placeOfBirth','03')
@@ -149,7 +149,7 @@ describe('utils', () => {
 		})
 	})
 	describe('#converter.objectC2Scase', () => {
-		it(`Should convert an object with snake case fields to camel case fields.`, () => {
+		it('Should convert an object with snake case fields to camel case fields.', () => {
 			const o = objectS2Ccase({
 				moreInfo: 'Hello',
 				first_name:'Nic',

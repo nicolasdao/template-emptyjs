@@ -145,7 +145,7 @@ const mergeCollection = (...collections) => {
 
 const nbrToCurrency = (nbr, symbol='$') => {
 	if (typeof(nbr) != 'number')
-		return '$0.00'
+		return `${symbol}0.00`
 
 	return `${symbol}${nbr.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`
 }

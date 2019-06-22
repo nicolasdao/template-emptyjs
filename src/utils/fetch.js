@@ -9,6 +9,7 @@ const fs = require('fs')
 const fetch = require('node-fetch')
 const { Writable } = require('stream')
 const { getInfo } = require('./url')
+const FormData = require('form-data')
 
 /**
  * [description]
@@ -60,25 +61,52 @@ const _processResponse = (res, uri, options={}) => {
 		.catch(() => ({ status: res.status, data: res, headers: res.headers }))
 }
 
-const postData = ({ uri, headers={}, body, streamReader, dst, parsing }) => 
-	fetch(uri, { method: 'POST', headers, body }).then(res => _processResponse(res, uri, { streamReader, dst, parsing }))
+const _fetch = ({ uri, headers={}, body, streamReader, dst, parsing }, method) => {
+	const _body = !body || typeof(body) == 'string' || (body instanceof Buffer) || (body instanceof FormData) ? body : JSON.stringify(body)
+	return fetch(uri, { method, headers, body:_body }).then(res => _processResponse(res, uri, { streamReader, dst, parsing }))
+}
 
-const putData = ({ uri, headers={}, body, streamReader, dst, parsing }) => 
-	fetch(uri, { method: 'PUT', headers, body }).then(res => _processResponse(res, uri, { streamReader, dst, parsing }))
+const postData = input => _fetch(input, 'POST')
 
-const patchData = ({ uri, headers={}, body, streamReader, dst, parsing }) => 
-	fetch(uri, { method: 'PATCH', headers, body }).then(res => _processResponse(res, uri, { streamReader, dst, parsing }))
+const putData = input => _fetch(input, 'PUT')
 
-const deleteData = ({ uri, headers={}, body, streamReader, dst, parsing }) => 
-	fetch(uri, { method: 'DELETE', headers, body }).then(res => _processResponse(res, uri, { streamReader, dst, parsing }))
+const patchData = input => _fetch(input, 'PATCH')
 
-const getData = ({ uri, headers={}, streamReader, dst, parsing }) => 
-	fetch(uri, { method: 'GET', headers }).then(res => _processResponse(res, uri, { streamReader, dst, parsing }))
+const deleteData = input => _fetch(input, 'DELETE')
+
+const getData = input => _fetch(input, 'GET')
+
+const graphQLQuery = ({ uri, headers, query }) => {
+	if (!uri)
+		throw new Error('Missing required \'uri\' argument.')
+	if (!query)
+		throw new Error('Missing required \'query\' argument.')
+	if (typeof(query) != 'string')
+		throw new Error('Wrong argument exception. \'query\' must be a string.')
+
+	const api_url = `${uri}?query=${encodeURIComponent(query)}`
+	return getData({ uri:api_url, headers })
+}
+
+const graphQLMutation = ({ uri, headers, query }) => {
+	if (!uri)
+		throw new Error('Missing required \'uri\' argument.')
+	if (!query)
+		throw new Error('Missing required \'query\' argument.')
+	if (typeof(query) != 'string')
+		throw new Error('Wrong argument exception. \'query\' must be a string.')
+	const api_url = `${uri}?query=mutation${encodeURIComponent(query)}`
+	return postData({ uri:api_url, headers })
+}
 
 module.exports = {
 	post: postData,
 	'get': getData,
 	put: putData,
 	patch: patchData,
-	delete: deleteData
+	delete: deleteData,
+	graphql: {
+		query: graphQLQuery,
+		mutate: graphQLMutation
+	}
 }

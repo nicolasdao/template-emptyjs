@@ -49,18 +49,22 @@ const headTail = (a, headSize=1) => (a || []).reduce((acc, v, idx) => {
 /**
  * Removes duplicate items from array. 
  * 
- * @param  {[Object]} a  		Array of items
+ * @param  {[Object]} arr  		Array of items
  * @param  {Function} fn 		Optional. Default x => x. Function used to pick a property used to define identity.
  * @return {[Object]} output    Array 'a' with unique items.
  */
-const uniq = (a, fn) => {
+const uniq = (arr, fn) => {
 	fn = fn || (x => x)
-	return Object.keys((a || []).reduce((acc,x) => {
-		const v = fn(x)
-		if (!acc[v])
-			acc[v] = true
-		return acc
-	}, {}))
+	arr = arr || []
+	return arr.reduce((a,obj) => {
+		const key = fn(obj)
+		if (!a.keys[key]) {
+			a.keys[key] = true 
+			a.value.push(obj)
+		}
+
+		return a
+	}, { keys:{}, value:[] }).value
 }
 
 const _objectSortBy = (obj, fn = x => x, dir='asc') => Object.keys(obj || {})

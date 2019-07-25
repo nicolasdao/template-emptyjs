@@ -1,4 +1,4 @@
-# Empty Project &middot; [![Tests](https://travis-ci.org/nicolasdao/emptyjs.svg?branch=master)](https://travis-ci.org/nicolasdao/emptyjs) [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) [![Neap](https://neap.co/img/made_by_neap.svg)](#this-is-what-we-re-up-to)
+# Empty Project &middot; [![Tests](https://travis-ci.org/nicolasdao/template-emptyjs.svg?branch=master)](https://travis-ci.org/nicolasdao/template-emptyjs) [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause) [![Neap](https://neap.co/img/made_by_neap.svg)](#this-is-what-we-re-up-to)
 __*Empty project*__ which does heaps of cool stuff.
 
 # Table of Contents

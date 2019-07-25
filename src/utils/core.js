@@ -242,6 +242,22 @@ const encoder = (obj, options) => {
 	}
 }
 
+const addZero = (nbr,l) => {
+	let r = `${nbr}`
+	if (!l || typeof(nbr) != 'number')
+		return r
+
+	const currentLength = r.length
+	if (currentLength >= l)
+		return r
+
+
+	for(let i=0;i<l-currentLength;i++)
+		r = '0'+r
+
+	return r
+}
+
 //////////////////////////                           END CONVERTER	                            ////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -289,15 +305,15 @@ const getDateUtc = (date) => {
 	return new Date(now_utc)
 }
 
-const addZero = nbr => ('0' + nbr).slice(-2)
+const _addZero = nbr => ('0' + nbr).slice(-2)
 
 const getTimestamp = (options={ short:true }) => {
 	const d = getDateUtc(new Date())
-	const main = `${d.getUTCFullYear()}${addZero(d.getUTCMonth()+1)}${addZero(d.getUTCDate())}`
+	const main = `${d.getUTCFullYear()}${_addZero(d.getUTCMonth()+1)}${_addZero(d.getUTCDate())}`
 	if (options.short)
 		return main
 	else 
-		return `${main}-${addZero(d.getUTCHours())}${addZero(d.getUTCMinutes())}${addZero(d.getUTCSeconds())}`
+		return `${main}-${_addZero(d.getUTCHours())}${_addZero(d.getUTCMinutes())}${_addZero(d.getUTCSeconds())}`
 }
 
 const addDaysToDate = (d, v=0) => {
@@ -832,7 +848,8 @@ module.exports = {
 		objectC2Scase,
 		objectS2Ccase,
 		encoder,
-		nbrToCurrency
+		nbrToCurrency,
+		addZero
 	},
 	date: {
 		timestamp: getTimestamp,

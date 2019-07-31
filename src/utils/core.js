@@ -258,6 +258,15 @@ const addZero = (nbr,l) => {
 	return r
 }
 
+const toNumber = (val,_default) => {
+	const _v = `${val}`.trim()
+	const v = _v*1
+	if (!_v || isNaN(v))
+		return _default === undefined ? null : _default
+	else
+		return v
+}
+
 //////////////////////////                           END CONVERTER	                            ////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -849,7 +858,8 @@ module.exports = {
 		objectS2Ccase,
 		encoder,
 		nbrToCurrency,
-		addZero
+		addZero,
+		toNumber
 	},
 	date: {
 		timestamp: getTimestamp,

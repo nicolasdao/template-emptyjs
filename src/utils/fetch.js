@@ -10,6 +10,7 @@ const fetch = require('node-fetch')
 const { Writable } = require('stream')
 const { getInfo } = require('./url')
 const FormData = require('form-data')
+const { retry } = require('./promise')
 
 /**
  * [description]
@@ -99,6 +100,16 @@ const graphQLMutation = ({ uri, headers, query }) => {
 	return postData({ uri:api_url, headers })
 }
 
+const retryGetData = (input, options) => retry({ 
+	fn: () => getData(input), 
+	...(options || {})
+})
+
+const retryGraphQLQuery = (input, options) => retry({ 
+	fn: () => graphQLQuery(input), 
+	...(options || {})
+})
+
 module.exports = {
 	post: postData,
 	'get': getData,
@@ -107,6 +118,12 @@ module.exports = {
 	delete: deleteData,
 	graphql: {
 		query: graphQLQuery,
-		mutate: graphQLMutation
+		mutate: graphQLMutation,
+		retry: {
+			query: retryGraphQLQuery
+		}
+	},
+	retry: {
+		'get': retryGetData
 	}
 }

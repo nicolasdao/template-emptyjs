@@ -267,6 +267,20 @@ const toNumber = (val,_default) => {
 		return v
 }
 
+const toBoolean = (val,_default) => {
+	const _v = `${val}`.trim().toLowerCase()
+	return (_v == 'true' || _v == '1') ? true : (_v == 'false' || _v == '0') ? false : _default
+}
+
+const toArray  = (val,_default) => {
+	const _v = `${val}`.trim()
+	try {
+		return JSON.parse(_v)
+	} catch(e) {
+		return (() => _default)(e)
+	}
+}
+
 //////////////////////////                           END CONVERTER	                            ////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -859,7 +873,9 @@ module.exports = {
 		encoder,
 		nbrToCurrency,
 		addZero,
-		toNumber
+		toNumber,
+		toBoolean,
+		toArray
 	},
 	date: {
 		timestamp: getTimestamp,

@@ -479,6 +479,34 @@ const convertShortDateStringToDate = (date, options={}) => {
 	}
 }
 
+const SECOND = 1000
+const MINUTE = 60*SECOND
+const HOUR = 60*MINUTE
+const Timer = function() {
+	let _start
+	this.start = () => _start = Date.now()
+	this.time = (unit, restart) => {
+		const n = Date.now()
+		const ellapsedMs = n - (_start || n)
+		
+		if (restart)
+			_start = Date.now()
+
+		if (!unit || unit == 'millisecond')
+			return ellapsedMs
+		else if (unit == 'second')
+			return (ellapsedMs/SECOND).toFixed(2)*1
+		else if (unit == 'minute')
+			return (ellapsedMs/MINUTE).toFixed(2)*1
+		else if (unit == 'hour')
+			return (ellapsedMs/HOUR).toFixed(2)*1
+		else
+			throw new Error(`Wrong argument exception. Unit '${unit}' is unknown. Valid units are: 'millisecond', 'second', 'minute' and 'hour'.`)
+	}
+	this.reStart = () => _start = Date.now()
+	return this
+}
+
 //////////////////////////                           END DATETIME HELPER                        ////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -886,7 +914,8 @@ module.exports = {
 		addMinutes: addMinutesToDate,
 		addSeconds: addSecondsToDate,
 		toShort: convertDateToShortDateString,
-		parseShort: convertShortDateStringToDate
+		parseShort: convertShortDateStringToDate,
+		Timer
 	},
 	identity: {
 		'new': newId

@@ -6,6 +6,8 @@
  * LICENSE file in the root directory of this source tree.
 */
 
+// To skip a test, either use 'xit' instead of 'it', or 'describe.skip' instead of 'describe'
+
 const { assert } = require('chai')
 const { url, obj:{ merge, mirror, set:setProperty}, converter: { objectS2Ccase, s2cCase }, promise:{ retry } } = require('../src/utils')
 

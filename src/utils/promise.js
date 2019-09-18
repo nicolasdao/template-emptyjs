@@ -21,6 +21,7 @@ const TIMEOUT = 'RJDtm78=_timeout'
  */
 const delay = (timeout) => {
 	let tRef
+	let finished = false
 	let output = Promise.resolve(null).then(() => {
 		let t = timeout || 100
 		if (Array.isArray(timeout)) {
@@ -43,11 +44,17 @@ const delay = (timeout) => {
 		}
 		
 		return new Promise(onSuccess => {
-			tRef = setTimeout(onSuccess, t)
+			tRef = setTimeout(() => {
+				finished = true
+				onSuccess()
+			}, t)
 		})
 	})
 
-	output.cancel = () => clearTimeout(tRef)
+	output.cancel = () => {
+		if (!finished)
+			clearTimeout(tRef) 
+	}
 
 	return output
 }

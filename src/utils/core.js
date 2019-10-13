@@ -206,16 +206,22 @@ const objectS2Ccase = obj => {
 	}, {})
 }
 
-const _supportedEncoding = { 'hex': true, 'utf8': true, 'base64': true, 'ascii': true, 'buffer': true }
+const _supportedEncoding = { 'hex': true, 'utf8': true, 'base64': true, 'ascii': true, 'buffer': true, 'dataURI':true }
 // Examples: 
 //	encoder('Hello').to('buffer')
 //	encoder('Hello').to('base64')
 //	encoder('SGVsbG8=', { type:'base64' }).to('utf8')
 //	encoder(buffer).to('utf8')
+//
+// @param {String|Buffer}	obj				Input.
+// @param {String}			options.type	(default: 'utf8'). Describes the 'obj' encoding. Valid values: 
+// 												'utf8', 'hex', 'base64', 'ascii', 'buffer', 'dataURI'
+// @param {Boolean}			options.force	(default: false). When this flag is true, any error is ignored.
 const encoder = (obj, options) => {
-	let { type } = options || {}
+	let { type, force } = options || {}
 	type = type || 'utf8'
-	const o = obj || ''
+	const o = type == 'dataURI' ? (obj || '').replace(/^data:(.*?);base64,/, '') : (obj || '')
+	type = type == 'dataURI' ? 'base64' : type
 	const isString = typeof(o) == 'string'
 	const isBuffer = o instanceof Buffer
 	if (!isString && !isBuffer)
@@ -228,16 +234,23 @@ const encoder = (obj, options) => {
 			if (!_supportedEncoding[encoding])
 				throw new Error(`Wrong argument exception. The 'encoder.to' method only accept the following encoding types: 'hex', 'utf8', 'base64', 'buffer' and 'ascii' (current: ${encoding})`)
 
-			if (isString) {
-				if (encoding == 'buffer')
-					return o ? Buffer.from(o, type) : new Buffer(0)
+			try {
+				if (isString) {
+					if (encoding == 'buffer')
+						return o ? Buffer.from(o, type) : new Buffer(0)
+					else
+						return Buffer.from(o, type).toString(encoding)
+				}
+				else if (encoding == 'buffer')
+					return o 
 				else
-					return Buffer.from(o, type).toString(encoding)
+					return o.toString(encoding)
+			} catch(err) {
+				if (force)
+					return null 
+				else
+					throw err
 			}
-			else if (encoding == 'buffer')
-				return o 
-			else
-				return o.toString(encoding)
 		}
 	}
 }

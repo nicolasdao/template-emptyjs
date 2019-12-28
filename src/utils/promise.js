@@ -13,11 +13,7 @@ const TIMEOUT = 'RJDtm78=_timeout'
 /**
  * Create an empty promise that returns after a certain delay
  * @param  {Number|[Number]} timeout 	If array, it must contain 2 numbers representing an interval used to select a random number
- * 
- * @return {Promise}		 output
- * @return {Function}		 output.then	
- * @return {Function}		 output.catch	
- * @return {Function}		 output.cancel  Parameterless function that will cancel the promise. This means that the promise is never resolved.		
+ * @return {Promise}         			[description]
  */
 const delay = (timeout) => {
 	let tRef
@@ -40,7 +36,7 @@ const delay = (timeout) => {
 			if (start > end)
 				throw new Error(`Wrong argument exception. The first number of the 'timeout' array must be strictly smaller than the second number (current: [${timeout[0]}, ${timeout[1]}])`)			
 
-			t = math.randomNumber({ start, end })
+			t = math.randomNumbers({ start, end })
 		}
 		
 		return new Promise(onSuccess => {

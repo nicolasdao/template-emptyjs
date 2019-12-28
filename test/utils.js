@@ -267,11 +267,8 @@ describe('utils', () => {
 			delay(25).then(() => {
 				assert.equal(seq.length, 3, '01')
 				assert.equal(seq[0].id, 1, '02')
-				assert.isOk(10 <= seq[0].time && seq[0].time <= 15 , '03')
-				assert.equal(seq[1].id, 2, '04')
-				assert.isOk(15 <= seq[1].time && seq[1].time <= 20 , '05')
-				assert.equal(seq[2].id, 3, '06')
-				assert.isOk(20 <= seq[2].time, '07')
+				assert.equal(seq[1].id, 2, '03')
+				assert.equal(seq[2].id, 3, '04')
 				done()
 			}).catch(done)
 		})

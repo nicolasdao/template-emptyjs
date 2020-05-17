@@ -30,7 +30,7 @@
     "standard-version": "^8.0.0"
   },
   "dependencies": {
-    "core-async": "^1.0.4",
+    "core-async": "^2.0.3",
     "form-data": "^2.4.0",
     "node-fetch": "^2.3.0"
   }

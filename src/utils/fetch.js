@@ -82,8 +82,15 @@ const _getBody = (headers, body) => {
 	const isFormEncoded = contentType == 'multipart/form-data'
 	if ((isUrlEncoded || isFormEncoded) && bodyType == 'object') {
 		const params = isUrlEncoded ? new URLSearchParams() : new FormData()
-		for (let key in body)
-			params.append(key, body[key])
+		for (let key in body) {
+			const value = body[key]
+			if (value !== null && value !== undefined) {
+				if (isFormEncoded && typeof(value) == 'object' && !(value instanceof Buffer))
+					params.append(key, Buffer.from(JSON.stringify(value)), { contentType:'application/json' })
+				else
+					params.append(key, value)
+			}
+		}
 		return params
 	} else 
 		return JSON.stringify(body)

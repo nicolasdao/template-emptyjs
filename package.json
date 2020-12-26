@@ -26,7 +26,7 @@
     "chai": "^4.1.2",
     "eslint": "^6.8.0",
     "mocha": "^8.2.1",
-    "node-dev": "^4.0.0",
+    "node-dev": "^6.2.0",
     "standard-version": "^9.0.0"
   },
   "dependencies": {}

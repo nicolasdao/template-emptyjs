@@ -14,11 +14,7 @@ __*Empty project*__ which does heaps of cool stuff.
 
 # Install
 ```
-git clone https://github.com/nicolasdao/template-emptyjs.git new-project-name
-cd new-project-name
-npm install
-npm test
-npm start
+npx degit https://github.com/nicolasdao/template-emptyjs.git new-project-name
 ```
 
 # How To Use It

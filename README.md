@@ -14,7 +14,7 @@ __*Empty project*__ which does heaps of cool stuff.
 
 # Install
 ```
-npx degit https://github.com/nicolasdao/template-emptyjs.git new-project-name
+npx degit https://github.com/nicolasdao/template-emptyjs.git
 ```
 
 # How To Use It

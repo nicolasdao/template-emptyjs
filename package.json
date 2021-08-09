@@ -12,9 +12,10 @@
   },
   "homepage": "https://github.com/nicolasdao/template-emptyjs#readme",
   "scripts": {
-    "dev": "TZ=UTC NODE_ENV=dev node-dev index.js",
+    "dev": "TZ=UTC NODE_ENV=dev node index.js",
     "lint": "eslint index.js src/ test/ --fix",
     "push": "git push --follow-tags origin master",
+    "push:npm": "git push --follow-tags origin master && npm publish",
     "rls": "standard-version --release-as",
     "start": "TZ=UTC NODE_ENV=production node index.js",
     "test": "mocha --exit",
@@ -26,8 +27,6 @@
     "chai": "^4.1.2",
     "eslint": "^6.8.0",
     "mocha": "^8.2.1",
-    "node-dev": "^7.0.0",
     "standard-version": "^9.3.0"
-  },
-  "dependencies": {}
+  }
 }

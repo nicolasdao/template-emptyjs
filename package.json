@@ -12,6 +12,7 @@
   },
   "homepage": "https://github.com/nicolasdao/template-emptyjs#readme",
   "scripts": {
+    "bashHack": "func() { echo \"My first name is $1 and my last name is $2\"; }; func",
     "dev": "TZ=UTC NODE_ENV=dev node index.js",
     "lint": "eslint index.js src/ test/ --fix",
     "push": "git push --follow-tags origin master",
